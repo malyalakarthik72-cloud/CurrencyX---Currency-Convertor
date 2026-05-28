@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CurrencyX – Real-time Exchange</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/static/css/style.css"/>
+</head>
+<body>
+
+<!-- ── NAVBAR ── -->
+<nav>
+  <div class="logo">
+    <div class="logo-icon">$</div>
+    <div>
+      <div class="logo-name">CurrencyX</div>
+      <div class="logo-sub">Real-time Exchange</div>
+    </div>
+  </div>
+  <button class="theme-btn" id="themeBtn">☀️</button>
+</nav>
+
+<!-- ── TICKER ── -->
+<div class="ticker">
+  <div class="ticker-inner">
+    <div class="ticker-track" id="tickerTrack">
+      <span style="color:var(--text3);font-size:12px">Loading rates...</span>
+    </div>
+  </div>
+</div>
+
+<!-- ── HERO ── -->
+<div class="hero">
+  <h1>Currency Converter</h1>
+  <p>Convert between 150+ world currencies with live exchange rates.</p>
+</div>
+
+<!-- ── MAIN GRID ── -->
+<div class="grid">
+
+  <!-- LEFT COLUMN -->
+  <div>
+
+    <!-- Converter Card -->
+    <div class="card">
+      <div class="card-head">
+        Currency Converter
+        <div class="live-badge"><div class="dot"></div> Live</div>
+      </div>
+
+      <div class="lbl">Amount</div>
+      <div class="amount-box">
+        <div class="sym" id="symLabel">$</div>
+        <input type="number" id="amtInput" value="1000" min="0" step="any"/>
+      </div>
+
+      <div class="fx-row">
+
+        <!-- From -->
+        <div>
+          <div class="lbl">From</div>
+          <div class="sel-wrap" id="fromWrap">
+            <button class="sel-btn" onclick="toggleDD('from')">
+              <div>
+                <span class="sel-code" id="fromCode">USD</span>
+                <span class="sel-name" id="fromName">US Dollar</span>
+              </div>
+              <span class="chev">▾</span>
+            </button>
+            <div class="dd" id="fromDD">
+              <div class="dd-search">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                <input type="text" id="fromSearch" placeholder="Search currency..." oninput="filterDD('from')"/>
+              </div>
+              <div class="dd-list" id="fromList"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Swap -->
+        <button class="swap-btn" onclick="doSwap()">⇄</button>
+
+        <!-- To -->
+        <div>
+          <div class="lbl">To</div>
+          <div class="sel-wrap" id="toWrap">
+            <button class="sel-btn" onclick="toggleDD('to')">
+              <div>
+                <span class="sel-code" id="toCode">EUR</span>
+                <span class="sel-name" id="toName">Euro</span>
+              </div>
+              <span class="chev">▾</span>
+            </button>
+            <div class="dd" id="toDD">
+              <div class="dd-search">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                <input type="text" id="toSearch" placeholder="Search currency..." oninput="filterDD('to')"/>
+              </div>
+              <div class="dd-list" id="toList"></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Result -->
+      <div class="result">
+        <div>
+          <div class="res-lbl">Result</div>
+          <div>
+            <span class="res-val" id="resVal">—</span>
+            <span class="res-cur" id="resCur">EUR</span>
+          </div>
+        </div>
+        <button class="copy-btn" onclick="doCopy()" title="Copy result">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="9" y="9" width="13" height="13" rx="2"/>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+          </svg>
+        </button>
+      </div>
+      <div class="rate-info" id="rateInfo"></div>
+    </div>
+
+    <!-- Quick Amounts Card -->
+    <div class="card">
+      <div class="card-head">Quick Amounts</div>
+      <div class="qa-grid" id="qaGrid">
+        <button class="qa-btn" onclick="setQA(100, this)">100</button>
+        <button class="qa-btn" onclick="setQA(500, this)">500</button>
+        <button class="qa-btn active" onclick="setQA(1000, this)">1,000</button>
+        <button class="qa-btn" onclick="setQA(5000, this)">5,000</button>
+        <button class="qa-btn" onclick="setQA(10000, this)">10,000</button>
+        <button class="qa-btn" onclick="setQA(50000, this)">50,000</button>
+      </div>
+    </div>
+
+    <!-- Recent Conversions Card -->
+    <div class="card">
+      <div class="rec-head">
+        <div class="rec-title">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+          </svg>
+          Recent Conversions
+        </div>
+        <button class="del-btn" onclick="clearRec()" title="Clear history">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="3 6 5 6 21 6"/>
+            <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+            <path d="M10 11v6"/><path d="M14 11v6"/>
+            <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+          </svg>
+        </button>
+      </div>
+      <div id="recList"><div class="rec-empty">No conversions yet</div></div>
+    </div>
+
+  </div>
+
+  <!-- RIGHT COLUMN: FOREX NEWS -->
+  <div class="card news-card-outer">
+    <div class="card-head">
+      <div style="display:flex; align-items:center; gap:8px;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/>
+        </svg>
+        Forex News
+      </div>
+    </div>
+    <div class="news-scroll" id="newsList">
+      <div class="loading">Loading news...</div>
+    </div>
+    <div class="news-note">News updated in real-time from major financial sources</div>
+  </div>
+
+</div>
+
+<!-- Toast notification -->
+<div class="toast" id="toast"></div>
+
+<script src="/static/js/script.js"></script>
+</body>
+</html>
